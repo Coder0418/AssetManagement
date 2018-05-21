@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.project.dao.LocationMapper">
+
+	<!-- 通过地点 id 获取地点对象：public Location getLocationById(Integer locationid); -->
+	<select id="getLocationById" resultType="com.project.beans.Location">
+		select * from Location where locationId = #{locationId}
+	</select>
+
+	<!-- 通过地点名称获取地点:public Location getLocationByName(String locationName); -->
+	<select id="getLocationByName" resultType="com.project.beans.Location">
+		select * from Location
+		where
+		locationName = #{locationName}
+	</select>
+
+	<!-- 添加地点对象, 并返回主键值:public int addLocation(Location location); -->
+	<insert id="addLocation" useGeneratedKeys="true" keyProperty="locationId">
+
+		INSERT INTO
+		Location(locationName,roomNumber)values(#{locationName},#{roomNumber});
+	</insert>
+
+	<!-- 通过地点 id 号删除地点:public void deleteLocationById(Integer id); -->
+	<delete id="deleteLocationById">
+		delete from Location where locationId = #{locationId}
+	</delete>
+
+	<!-- 更新地点对象信息:public void updateLocation(Location location); -->
+	<update id="updateLocation" parameterType="com.project.beans.Location">
+		UPDATE Location
+		<set>
+			<if test="locationName != null">
+				locationName=#{locationName},
+			</if>
+			<if test="roomNumber != null">
+				roomNumber=#{roomNumber}
+			</if>
+		</set>
+		<where>
+			locationId = #{locationId}
+		</where>
+	</update>
+
+	<!-- 获取所有地点信息:public List<Location> getAllLocations(); -->
+	<select id="getAllLocations" resultType="com.project.beans.Location">
+		select * from Location
+	</select>
+
+	<!-- 通过地点名称模糊查询:public List<Location> getLocationListForLike(String locationName); -->
+	<select id="getLocationListForLike" resultType="com.project.beans.Location">
+		select * from Location
+		where
+		locationName like CONCAT(CONCAT('%',#{locationName},'%'))
+	</select>
+
+</mapper>

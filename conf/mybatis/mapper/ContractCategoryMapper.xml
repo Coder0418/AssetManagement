@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.project.dao.ContractCategoryMapper">
+
+	<!-- 通过合同类别 id 获取 ContractCategory 对象:public ContractCategory getContractCategoryById(Integer 
+		contractCategoryId); -->
+	<select id="getContractCategoryById" resultType="com.project.beans.ContractCategory">
+		select * from
+		ContractCategory where contractCategoryId =
+		#{contractCategoryId}
+	</select>
+
+	<!-- 添加合同类别, 添加成功后返回主键:public int addContractCategory(ContractCategory contractCategory); -->
+	<insert id="addContractCategory" useGeneratedKeys="true"
+		keyProperty="contractCategoryId">
+
+		INSERT INTO
+		ContractCategory(contractCategoryName)values(#{contractCategoryName});
+	</insert>
+
+	<!-- 添加合同类别, 添加成功后返回主键:public int addContractCategory(ContractCategory contractCategory); -->
+	<update id="updateContractCategory" parameterType="com.project.beans.ContractCategory">
+		UPDATE
+		ContractCategory
+		SET contractCategoryName = #{contractCategoryName}
+
+		WHERE contractCategoryId = #{contractCategoryId};
+	</update>
+	
+	<!-- 通过合同类别 id 号删除指定合同类别:public void deleteContractCategoryById(Integer 
+		contractCategoryId); -->
+	<delete id="deleteContractCategoryById">
+		delete from ContractCategory where contractCategoryId
+		= #{contractCategoryId}
+	</delete>
+
+	<!-- 获取所有合同类别信息列表:public List<ContractCategory> getAllContractCategory(); -->
+	<select id="getAllContractCategory" resultType="com.project.beans.ContractCategory">
+		select * from
+		ContractCategory
+	</select>
+
+	<!-- 通过类别名称模糊查询合同类别信息:public List<ContractCategory> getContractCategoryListForLike(String 
+		contractCategoryName); -->
+	<select id="getContractCategoryListForLike" resultType="com.project.beans.ContractCategory">
+		select *
+		from ContractCategory
+		where
+		contractCategoryName like
+		CONCAT(CONCAT('%',#{contractCategoryName},'%'))
+	</select>
+
+</mapper>

@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.project.dao.AssetItemMapper">
+
+	<resultMap type="com.project.beans.AssetItem" id="AssetItemMap">
+		<id column="assetId" property="assetId" />
+		<result column="usedDepartment" property="usedDepartment"/>
+		<result column="assetName" property="assetName" />
+		<result column="assetCount" property="assetCount" />
+		<result column="assetEquity" property="assetEquity" />
+		<result column="assetLifeTime" property="assetLifeTime" />
+		<result column="assetAgent" property="assetAgent" />
+		<result column="assetSpecification" property="assetSpecification" />
+		<result column="certification" property="certification"/>
+		<result column="storageTime" property="storageTime" javaType="Date" />
+		<result column="purchaseTime" property="purchaseTime" />
+		<result column="country" property="country" />
+		<result column="number" property="number"  />
+		<result column="status" property="status"/>
+
+		<association property="department"
+			select="com.project.dao.DepartmentMapper.getDepartmentById" column="departmentId">
+		</association>
+
+		<association property="assetCategory"
+			select="com.project.dao.AssetCategoryMapper.getAssetCategoryById" column="assetCategoryId">
+		</association>
+
+		<association property="user"
+			select="com.project.dao.UserMapper.getUserById" column="userId">
+		</association>
+
+		<association property="assetLocation"
+			select="com.project.dao.LocationMapper.getLocationById" column="assetLocationId">
+		</association>
+
+		<collection property="extendInf" ofType="com.project.beans.ExtendInf">
+			<!-- 定义这个集合中元素的封装规则 -->
+			<!-- column 对应数据库列名	property 对应 bean 属性名 -->
+			<id column="extendId" property="extendId" />
+			<result column="alterProgress" property="alterProgress" />
+		</collection>
+
+	</resultMap>
+	
+	<!-- 通过资产项目 id 号查询资产项目信息: public AssetItem getAssetItemById(Integer assetItemId); -->
+	<select id="getAssetItemById" resultMap="AssetItemMap">
+		select * from assetItem
+		<where>
+			assetId = #{assetId}
+		</where>
+	</select>
+
+	<!-- 通过资产项目名称查询资产项目信息: public AssetItem getAssetItemByName(String assetName); -->
+	<select id="getAssetItemByName" resultMap="AssetItemMap">
+		select * from assetItem
+		<where>
+			assetName = #{assetName}
+		</where>
+	</select>
+	
+	<!-- 获取指定用户的所有资产: public List<AssetItem> getAssetItemListByUserId(Integer userId); -->
+	<select id="getAssetItemListByUserId" resultType="com.project.beans.AssetItem">
+		select * from AssetItem
+		<where>
+			userId = #{userId}
+		</where>
+	</select>
+
+	<!-- 通过资产入库时间查询资产项目信息: public List<AssetItem> getAssetItemByYear(String storageTime); -->
+	<select id="getAssetItemByYear" parameterType="string" resultMap="AssetItemMap">
+		select * from assetItem
+		<where>
+			storageTime like CONCAT(CONCAT('%', #{storageTime}, '%')) and status = 1
+		</where>
+	</select>
+
+	<!-- 通过资产项目对象属性作为查询条件, 查询资产项目信息: public AssetItem getAssetItem(AssetItem 
+		assetItem); -->
+	<!-- <select id="getAssetItem" resultType="com.project.beans.AssetItem"> 
+		select * from assetItem <where> </where> </select> -->
+
+	<!-- 添加资产项目信息, 添加后返回主键 id: public int addAssetItem(AssetItem assetItem); -->
+	<insert id="addAssetItem">
+		insert into AssetItem
+		<include refid="columns" />
+		values
+		(#{usedDepartment}, #{assetName}, #{assetCount}, #{assetEquity},
+		#{assetLifeTime}, #{assetAgent}, #{assetSpecification},
+		#{storageTime}, #{purchaseTime}, #{country}, #{certification},
+		#{number}, #{department.departmentId}, #{assetCategory.categoryId},
+		#{user.userId}, #{assetLocation.locationId}, #{extendInf.extendId})
+	</insert>
+
+	<!-- 通过资产项目 id 号删除执行资产项目: public void deleteAssetItemById(Integer assetId); -->
+	<delete id="deleteAssetItemById">
+		delete from AssetsUsed where assetId = #{assetId}
+	</delete>
+
+	<!-- 查询所有资产信息项目: public List<AssetItem> getAllAssetItem(); -->
+	<select id="getAllAssetItem" resultMap="AssetItemMap">
+		select * from assetItem a, ExtendInf e
+		where a.assetId = e.assetId
+		and status = 1
+	</select>
+
+	<!-- 以 assetItem 属性作为模糊查询条件, 查询资产项目信息: public List<AssetItem> getAssetItemListForLike(AssetItem assetItem); -->
+	<select id="getAssetItemListForLike" resultMap="AssetItemMap">
+		select * from AssetItem a, User u, Location l, AssetCategory category
+		where 1=1
+		and a.userId = u.userId
+		and a.assetLocationId = l.locationId
+		and a.assetCategoryId = category.categoryId
+		<if test="usedDepartment != null">
+			and usedDepartment like CONCAT(CONCAT('%', #{usedDepartment}, '%'))
+		</if>
+		
+		<if test="assetCategory != null">
+			and assetCategoryId = #{assetCategory.categoryId}
+		</if>
+		
+		<if test="assetName != null">
+			and assetName like CONCAT(CONCAT('%', #{assetName}, '%'))
+		</if>
+		
+		<if test="assetEquityMin > 0.0">
+			and a.assetEquity &gt;= #{assetEquityMin} 
+		</if>
+		
+		<if test="assetEquityMax != 0.0">
+			and a.assetEquity &lt;= #{assetEquityMax}
+		</if>
+
+		<if test="user != null">
+			and u.userName like CONCAT(CONCAT('%', #{user.userName}, '%'))
+		</if>
+		
+		<if test="assetLocation != null">
+			and assetLocation like CONCAT(CONCAT('%', #{assetLocation}, '%'))
+		</if>
+		
+		<if test="status != null">
+			and status = #{status}
+		</if>
+	</select>
+	
+	<sql id="columns">
+		(usedDepartment, assetName, assetCount, assetEquity,
+		assetLifeTime, assetAgent, assetSpecification, storageTime,
+		purchaseTime, country, certification, number, departmentId,
+		assetCategoryId, userId, assetLocationId, extendInfId)
+	</sql>
+
+	<!-- 更新资产项目信息: public void updateAssetItem(AssetItem assetItem); -->
+	<update id="updateAssetItem">
+		update AssetItem
+		<set>
+			<!-- <if test="usedDepartment != null">
+				usedDepartment = #{usedDepartment},
+			</if>
+			<if test="assetName != null">
+				assetName = #{assetName}
+			</if>
+			<if test="assetCount != null">
+				assetCount = #{assetCount}
+			</if>
+			<if test="assetEquity != null">
+				assetEquity = #{assetEquity}
+			</if>
+			<if test="assetLifeTime != null">
+				assetLifeTime = #{assetLifeTime}
+			</if>
+			<if test="assetAgent != null">
+				assetAgent = #{assetAgent}
+			</if>
+			<if test="assetSpecification != null">
+				assetSpecification = #{assetSpecification}
+			</if>
+			<if test="storageTime != null">
+				storageTime = #{storageTime}
+			</if>
+			<if test="purchaseTime != null">
+				purchaseTime = #{purchaseTime}
+			</if>
+			<if test="country != null">
+				country = #{country},
+			</if>
+			<if test="certification != null">
+				certification = #{certification}
+			</if>
+			<if test="number != null">
+				number = #{number}
+			</if> -->
+			<if test="status != null">
+				status = #{status},
+			</if>
+			<!-- <if test="department != null">
+				departmentId = #{department.departmentId}
+			</if>
+			<if test="assetCategory != null">
+				assetCategoryId = #{assetCategory.categoryId}
+			</if> -->
+			<if test="assetLocation != null">
+				assetLocationId = #{assetLocation.locationId}, 
+			</if>
+			<if test="extendInf != null">
+				extendInfId = #{extendInf.extendInfId}
+			</if>
+			<if test="user != null">
+				userId = #{user.userId}
+			</if>
+		</set>
+		<where>
+			assetId = #{assetId}
+		</where>
+	</update>
+
+</mapper>

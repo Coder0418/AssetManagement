@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.project.dao.AssetsUsedMapper">
+
+	<!-- 通过资产用途 id 号获取资产用途信息:public AssetsUsed getAssetsUsedById(Integer assetUsedId); -->
+	<select id="getAssetsUsedById" resultType="com.project.beans.AssetsUsed">
+		select * from
+		AssetsUsed where usedId = #{usedId}
+	</select>
+
+	<!-- 添加资产用途, 添加成功后返回主键 id:public int addAssetsUsed(AssetsUsed assetsUsed); -->
+	<insert id="addAssetsUsed" useGeneratedKeys="true" keyProperty="usedId">
+		<!-- <selectKey resultType="java.lang.Long" order="AFTER" keyProperty="usedId"> 
+			SELECT LAST_INSERT_ID() </selectKey> -->
+		INSERT INTO
+		AssetsUsed(usedName,usedNumber)values(#{usedName},#{usedNumber});
+	</insert>
+
+	<!-- 更新资产用途对象:public void updateAssetsUsed(AssetsUsed assetsUsed); -->
+	<update id="updateAssetsUsed" parameterType="com.project.beans.AssetsUsed">
+		update AssetsUsed
+		<set>
+			<if test="usedName != null">
+				usedName=#{usedName},
+			</if>
+			<if test="usedNumber != null">
+				usedNumber=#{usedNumber}
+			</if>
+		</set>
+		<where>
+			usedId = #{usedId}
+		</where>
+
+	</update>
+
+	<!-- 通过资产用途 id 号删除指定资产用途对象:public void deleteAssetsUsedById(Integer assetsUsedId); -->
+	<delete id="deleteAssetsUsedById">
+		delete from AssetsUsed where usedId = #{usedId}
+	</delete>
+
+	<!-- 获取所有资产用途信息:public List<AssetsUsed> getAllAssetsUsed(); -->
+	<select id="getAllAssetsUsed" resultType="com.project.beans.AssetsUsed">
+		select * from
+		AssetsUsed
+	</select>
+
+	<!-- 以 assetsUsed 对象属性作为模糊条件, 查询 资产用途信息:public List<AssetsUsed> getAssetsUsedListForLike(AssetsUsed 
+		assetsUsed); -->
+	<select id="getAssetsUsedListForLike" resultType="com.project.beans.AssetsUsed">
+		select * from AssetsUsed
+		where
+		<if test="usedName != null">
+			usedName like CONCAT(CONCAT('%',#{usedName},'%'))
+		</if>
+
+		<if test="usedNumber != null">
+			and usedNumber like CONCAT(CONCAT('%',#{usedNumber},'%'))
+		</if>
+	</select>
+
+</mapper>

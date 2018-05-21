@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.project.dao.AssetCategoryMapper">
+	<!-- 通过资产分类 id 获取资产分类对象:public AssetCategory getAssetCategoryById(Integer 
+		assetCategoryId); -->
+	<select id="getAssetCategoryById" resultType="com.project.beans.AssetCategory">
+		select * from
+		AssetCategory where categoryId = #{assetCategoryId}
+	</select>
+
+	<!-- 添加资产分类信息:public int addAssetCategory(AssetCategory assetCategory); -->
+	<insert id="addAssetCategory" parameterType="com.project.beans.AssetCategory">
+		insert into
+		AssetCategory(categoryName) values (#{categoryName})
+	</insert>
+
+	<!-- 更新资产分类信息:public void updateAssetCategory(AssetCategory assetCategory); -->
+	<update id="updateAssetCategory" parameterType="com.project.beans.AssetCategory">
+		UPDATE
+		AssetCategory
+		SET categoryName = #{categoryName}
+
+		WHERE categoryId =
+		#{categoryId};
+	</update>
+
+	<!-- 通过资产分类 id 删除指定资产分类信息:public void deleteAssetCategoryById(Integer assetCategoryId); -->
+	<delete id="deleteAssetCategoryById" parameterType="com.project.beans.AssetCategory">
+		DELETE FROM
+		AssetCategory WHERE categoryId = #{categoryId}
+	</delete>
+
+	<!-- 获取所有资产分类信息:public List<AssetCategory> getAllAssetCategory(); -->
+	<select id="getAllAssetCategory" resultType="com.project.beans.AssetCategory">
+		select * from
+		AssetCategory
+	</select>
+
+
+</mapper>

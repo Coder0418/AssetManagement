@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.project.dao.UserMapper">
+
+	<!-- 根据指定用户 id 查询用户: public User getUserById(Integer userId); -->
+	<select id="getUserById" resultType="com.project.beans.User">
+		select * from User where userId = #{userId}
+	</select>
+
+	<!-- 查看指定用户名的用户是否存在(用户名验证): public User getUserByUserName(String userName); -->
+	<!-- <select id="getUserByUserName" resultType="com.beans.User">
+		select * from user where userName = #{userName}
+	</select> -->
+
+	<!-- 通过用户名及密码查看用户是否存在(登陆使用): public User getUserByUserNameAndPassWord(String 
+		userName, String passWord); -->
+	<select id="getUserByUserNameAndPassWord" resultType="com.project.beans.User">
+		select * from User where userName = #{userName} and passWord = #{passWord}
+	</select>
+
+	<!-- 删除指定 id 号的用户: public void deleteUserById(Integer userId); -->
+	<!-- <delete id="deleteUserById">
+		delete from user where userId = #{userId}
+	</delete> -->
+
+	<!-- 添加用户: public void addUser(User user); -->
+	<!-- <insert id="addUser" useGeneratedKeys="true" keyProperty="userId" parameterType="com.beans.User">
+		insert into user(userName, passWord, permission) values (#{userName}, #{passWord}, #{permission})
+	</insert> -->
+
+	<!-- 通过指定 User 对象的属性更新用户: public void updateUser(User user); -->
+	<!-- <update id="updateUser">
+		update user
+		<set>
+			<if test="userId != null">
+				userId = #{userId},
+			</if>
+			<if test="userName != null">
+				userName = #{userName},
+			</if>
+			<if test="passWord != null">
+				passWord = #{passWord},
+			</if>
+			<if test="permission != null">
+				permission = #{permission}
+			</if>
+		</set>
+		<choose>
+			<when test="userId != null">
+				where userId = #{userId}
+			</when>
+			<otherwise>
+				where userName = #{userName}
+			</otherwise>
+		</choose>
+	</update> -->
+
+	<!-- 查询用户表中用户的个数: public int getUserNumber(); -->
+	<!-- <select id="getUserNumber" resultType="int">
+		select count(*) from user
+	</select> -->
+
+	<!-- 查询所有用户: public List<User> getUserAllUsers(); -->
+	<select id="getUserAllUsers" resultType="com.project.beans.User">
+		select * from user
+	</select>
+
+	<!-- 通过 User 对象中的条件进行模糊查询: public List<User> getUserForList(String userName); -->
+	<!-- <select id="getUserForList" resultType="com.beans.User">
+		select * from user where userName LIKE CONCAT(CONCAT('%', #{userName}), '%')
+	</select> -->
+</mapper>

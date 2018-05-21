@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.project.dao.ExtendInfMapper">
+	
+	<!-- 通过扩展信息 id 号获取扩展信息对象: public ExtendInf getExtendInfById(Integer extendId); -->
+	<select id="getExtendInfById" resultType="com.project.beans.ExtendInf">
+		select * from ExtendInf
+		<where>
+			extendId = #{extendId}
+		</where>
+	</select>
+	
+	<!-- 通过 assetId 获取扩展信息: public List<ExtendInf> getExtendInfByAssetId(Integer assetId); -->
+	<select id="getExtendInfByAssetId" resultType="com.project.beans.ExtendInf">
+		select * from ExtendInf
+		<where>
+			assetId = #{assetId}
+		</where>
+	</select>
+	
+	<!-- 获取所有 assetId 的最后一条扩展信息项: public ExtendInf getLastExtendInfByAssetId(Integer assetId); -->
+	<select id="getLastExtendInfByAssetId" resultType="com.project.beans.ExtendInf">
+		select * from ExtendInf
+		<where>
+			assetId = #{assetId} 
+		</where>
+		order by extendId desc limit 1
+	</select>
+	
+	<!-- 获取指定资产扩展信息的最后一条记录: public ExtendInf getAlterInfByAssetId(Integer assetId); -->
+	<select id="getAlterInfByAssetId" resultType="com.project.beans.ExtendInf">
+		select * from ExtendInf where alterProgress = '未审批'
+		and assetId = #{assetId}
+		order by extendId desc limit 1 
+	</select>
+	
+	<!-- 添加设备扩展信息, 并返回添加主键值: public int addExtendInf(ExtendInf extendInf); -->
+	<insert id="addExtendInf">
+		insert into ExtendInf(alterProgress, alterReason, alterAgentName, alterSubmitUserName, newLocationId, alterTime, barCode, assetId) 
+		values (#{alterProgress}, #{alterReason}, #{alterAgentName}, #{alterSubmitUserName}, #{newLocationId}, #{alterTime}, #{barCode}, #{assetId})
+	</insert>
+	
+	<!-- 通过扩展 id 号删除扩展信息: public void deleteExtendInfById(Integer extendId); -->
+	<delete id="deleteExtendInfById">
+		delete from ExtendInf where extendId = #{extendId}
+	</delete>
+	
+	<!-- 更新扩展信息: public void updateExtendInf(ExtendInf extendInf); -->
+	<update id="updateExtendInf">
+		update ExtendInf
+		<set>
+			<if test="alterProgress != null">
+				alterProgress = #{alterProgress},
+			</if>
+			<if test="alterReason != null">
+				alterReason = #{alterReason},
+			</if>
+			<if test="alterProgress != null">
+				alterProgress = #{alterProgress},
+			</if>
+			<if test="alterUserName != null">
+				alterUserName = #{alterUserName},
+			</if>
+			<if test="alterSubmitUserName != null">
+				alterSubmitUserName = #{alterSubmitUserName}
+			</if>
+		</set>
+		<where>
+			extendId = #{extendId}
+		</where>
+	</update>
+	
+	<!-- 获取所有扩展信息: public List<ExtendInf> getAllExtendInf(); -->
+	<select id="getAllExtendInf" resultType="com.project.beans.ExtendInf">
+		select * from ExtendInf
+	</select>
+	
+</mapper>

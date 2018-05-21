@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.project.dao.WareHouseMapper">
+
+	<!-- 通过入库资产 id 号查询入库资产项目: public WareHouseAsset getWareHouseByAssetItemId(Integer assetItemId); -->
+	<select id="getWareHouseByAssetItemId" resultType="com.project.beans.WareHouseAsset">
+		select * from WareHouseAsset
+		<where>
+			assetItemId = #{assetItemId}
+		</where>
+	</select>
+	
+	<!-- 添加入库资产项目: public int addWareHouseAsset(WareHouseAsset wareHouseAsset); -->
+	<insert id="addWareHouseAsset">
+		insert into WareHouseAsset
+		<include refid="wareHouseAssetColumns" />
+		values
+		(#{assetItemName}, #{assetItemNumber}, #{assetItemEquity}, #{assetItemSpecification}, #{storageTime}, #{purchaseTime}, #{assetAgent}, #{reason}, #{assetItemCategoryId})
+	</insert>
+	
+	<!-- 更新资产数量: public void updateAssetNumber(Integer assetItemNumber); -->
+	<update id="updateAssetNumber">
+		update WareHouseAsset
+		<set>
+			assetItemNumber = #{assetItemNumber}
+		</set>
+	</update>
+	
+	<!-- 通过年限查询查询入库资产列表: public List<WareHouseAsset> getAssetListByStorageTime(String storageTime); -->
+	<select id="getAssetListByStorageTime" parameterType="string" resultType="com.project.beans.WareHouseAsset">
+		select * from WareHouseAsset
+		<where>
+			storageTime like CONCAT(CONCAT('%', #{storageTime}, '%'))
+		</where>
+	</select>
+	
+	<!-- 查询所有入库资产: public List<WareHouseAsset> getAllAsset(); -->
+	<select id="getAllAsset" resultType="com.project.beans.WareHouseAsset">
+		select * from WareHouseAsset
+	</select>
+	
+	<!-- 通过入库原因查询所有资产: public List<WareHouseAsset> getWareHouseAssetListByReason(String reason); -->
+	<select id="getWareHouseAssetListByReason" parameterType="string" resultType="com.project.beans.WareHouseAsset">
+		select * from WareHouseAsset
+		<where>
+			reason = #{reason}
+		</where>
+	</select>
+	
+	<!-- 通过入库资产名称模糊查询入库资产列表: public List<WareHouseAsset> getWareHouseAssetListByName(String assetItemName); -->
+	<select id="getWareHouseAssetListByName" parameterType="string" resultType="com.project.beans.WareHouseAsset">
+		select * from WareHouseAsset
+		<where>
+			assetItemName like CONCAT(CONCAT('%', #{assetItemName}, '%'))
+		</where>
+	</select>
+	
+	<!-- 通过入库资产 id 号删除指定入库资产: public void deleteWareHouseAssetById(Integer assetItemId); -->
+	<delete id="deleteWareHouseAssetById">
+		delete from WareHouseAsset where assetItemId = #{assetItemId}
+	</delete>
+	
+	<sql id="wareHouseAssetColumns">
+		(assetItemName, assetItemNumber, assetItemEquity, assetItemSpecification, storageTime, purchaseTime, assetAgent, reason, assetItemCategoryId)
+	</sql>
+
+</mapper>

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.project.dao.ContractMapper">
+
+	<resultMap type="com.project.beans.Contract" id="Contract_Cag">
+		<id column="contractId" property="contractId" />
+		<result column="contractName" property="contractName" javaType="string" jdbcType="VARCHAR" />
+		<result column="applicationNumber" property="applicationNumber" javaType="string" jdbcType="VARCHAR" />
+		<result column="payment" property="payment" javaType="double" jdbcType="DOUBLE" />
+		<result column="oppositeCompany" property="oppositeCompany" javaType="string" jdbcType="VARCHAR" />
+		<result column="progress" property="progress" javaType="string" jdbcType="VARCHAR" />
+		<result column="applicantName" property="applicantName" javaType="string" jdbcType="VARCHAR" />
+		<result column="applicantCompany" property="applicantCompany" javaType="string" jdbcType="VARCHAR" />
+		<result column="applyTime" property="applyTime" javaType="Date" jdbcType="DATE" />
+		<result column="printTime" property="printTime" javaType="Date" jdbcType="DATE" />
+		
+		<association property="contractCategory"
+			select="com.project.dao.ContractCategoryMapper.getContractCategoryById" column="contractCategoryId">
+		</association>
+	</resultMap>
+
+	<!-- 通过合同 id 号获取合同信息:public Contract getContractById(Integer contractId); -->
+	<select id="getContractById" resultMap="Contract_Cag">
+		select * from
+		Contract,ContractCategory
+		where Contract.contractId = #{contractId} and
+		Contract.contractCategoryId = ContractCategory.contractCategoryId
+	</select>
+
+	<!-- 通过申请单号获取合同信息:public Contract getContractByApplicationNumber(String applicationNumber); -->
+	<select id="getContractByApplicationNumber" resultMap="Contract_Cag">
+		select *
+		from Contract, ContractCategory
+		where Contract.applicationNumber=
+		#{applicationNumber} and
+		Contract.contractCategoryId =
+		ContractCategory.contractCategoryId
+	</select>
+	
+	<!-- 添加新合同对象: public int addContract(Contract contract); -->
+	<insert id="addContract">
+		insert into contract
+		<include refid="columns" />
+		values
+		(#{contractName}, #{applicationNumber}, #{payment}, #{oppositeCompany},
+		#{progress}, #{applicantName}, #{applicantCompany},
+		#{applyTime}, #{contractCategory.contractCategoryId})
+	</insert>
+	
+	<sql id="columns">
+		(contractName, applicationNumber, payment, oppositeCompany, progress, applicantName, applicantCompany, applyTime, contractCategoryId)
+	</sql>
+	
+	<!-- 通过 contract 对象信息进行模糊查询: public List<Contract> getContractListForLike(Contract contract); -->
+	<select id="getContractListForLike" resultMap="Contract_Cag">
+		select * from Contract contract
+		where 1=1
+		<if test="#{applicantName} != null">
+			and applicantName = #{applicantName}
+		</if>
+	</select>
+	
+	<!-- 以 Contract 对象属性作为查询条件, 查询合同信息：public Contract getContract(Contract contract); -->
+	<select id="getContract" resultMap="Contract_Cag">
+		select * from Contract, ContractCategory contractCategory
+		where 1=1 and
+		Contract.contractCategoryId = contractCategory.contractCategoryId
+
+		<if test="#{contractId} != null">
+			and contractId = #{contractId}
+		</if>
+		<if test="#{contractName} != null">
+			and contractName = #{contractName}
+		</if>
+		<if test="#{applicationNumber} != null">
+			and applicationNumber = #{applicationNumber}
+		</if>
+		<if test="#{payment} != null">
+			and payment = #{payment}
+		</if>
+		<if test="#{oppositeCompany} != null">
+			and oppositeCompany = #{oppositeCompany}
+		</if>
+		<if test="#{progress} != null">
+			and progress = #{progress}
+		</if>
+		<if test="#{applicantName} != null">
+			and applicantName = #{applicantName}
+		</if>
+		<if test="#{applicantCompany} != null">
+			and applicantCompany = #{applicantCompany}
+		</if>
+		<if test="#{applyTime} != null">
+			and applyTime = #{applyTime}
+		</if>
+		<if test="#{printTime} != null">
+			and printTime = #{printTime}
+		</if>
+	</select>
+
+</mapper>

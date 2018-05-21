@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.project.dao.UsedtypeMapper">
+
+	<!-- 通过 id 号获取<资产使用方向>对象: public Usedtype getUsedtypeById(Integer usedtypeId); -->
+	<select id="getUsedtypeById" resultType="com.project.beans.Usedtype">
+		select * from Usedtype
+		where typeId = #{typeId}
+	</select>
+
+	<!-- 通过方向名称获取<资产使用方向>对象: public Usedtype getUsedtypeByName(String typeName); -->
+	<select id="getUsedtypeByName" resultType="com.project.beans.Usedtype">
+		select * from Usedtype
+		where typeName = #{typeName}
+	</select>
+
+	<!-- 添加<资产使用方向>对象并返回主键 id:public int addUsedtype(Usedtype usedtype); -->
+	<insert id="addUsedtype" useGeneratedKeys="true" keyProperty="typeId"
+		parameterType="com.project.beans.Usedtype">
+		insert into Usedtype(typeId,typeName) values
+		(#{typeId},#{typeName})
+	</insert>
+
+	<!-- 通过 id号删除<资产使用方向>对象:public void deleteUsedtypeById(Integer id); -->
+	<delete id="deleteUsedtypeById">
+		delete from Usedtype where typeId = #{typeId}
+	</delete>
+
+	<!-- 更新 Usedtype 对象:public void updateUsedtype(Usedtype usedtype); -->
+	<update id="updateUsedtype" parameterType="com.project.beans.Usedtype">
+		UPDATE Usedtype
+		SET
+		typeName = #{typeName}
+		WHERE typeId = #{typeId};
+	</update>
+
+	<!-- 获取所有<资产使用方向>对象:public List<Usedtype> getAllUsedtype(); -->
+	<select id="getAllUsedtype" resultType="com.project.beans.Usedtype">
+		select * from usedtype
+	</select>
+
+</mapper>

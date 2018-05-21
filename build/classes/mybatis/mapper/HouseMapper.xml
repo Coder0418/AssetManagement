@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.project.dao.HouseMapper">
+
+	<resultMap type="com.project.beans.House" id="HouseMap">
+		<id column="houseId" property="houseId" />
+		<result column="buildingName" property="buildingName" javaType="string"
+			jdbcType="VARCHAR" />
+		<result column="houseNumber" property="houseNumber" javaType="string"
+			jdbcType="VARCHAR" />
+		<result column="houseName" property="houseName" javaType="string"
+			jdbcType="VARCHAR" />
+		<result column="houseEquity" property="houseEquity" javaType="double"
+			jdbcType="DOUBLE" />
+		<result column="coveredArea" property="coveredArea" javaType="double"
+			jdbcType="DOUBLE" />
+		<result column="usableArea" property="usableArea" javaType="double"
+			jdbcType="DOUBLE" />
+		<result column="responsiblePersonName" property="responsiblePersonName"
+			javaType="string" jdbcType="VARCHAR" />
+		<result column="buildingStructure" property="buildingStructure"
+			javaType="string" jdbcType="VARCHAR" />
+		<result column="completionDate" property="completionDate"
+			javaType="Date" jdbcType="DATE" />
+
+		<association property="department"
+			select="com.project.dao.DepartmentMapper.getDepartmentById" column="departmentId">
+		</association>
+		<association property="location"
+			select="com.project.dao.LocationMapper.getLocationById" column="locationId">
+		</association>
+		<association property="usedtype"
+			select="com.project.dao.UsedtypeMapper.getUsedtypeById" column="usedtypeId">
+		</association>
+		<association property="assetsused"
+			select="com.project.dao.AssetsUsedMapper.getAssetsUsedById" column="usedId">
+		</association>
+	</resultMap>
+
+	<!-- 通过 id 号获取房屋对象信息: public House getHouseById(Integer houseId); -->
+	<select id="getHouseById" resultMap="HouseMap">
+		select * from House
+		where
+		houseId = #{houseId}
+	</select>
+
+	<!-- 通过 house 对象获取 House 信息:public House getHouse(House house); <select 
+		id="getHouse" resultType="com.project.beans.House"> select * from house where 
+		house = #{house} </select> -->
+
+	<!-- 添加房屋对象, 并返回主键值:public int addHouse(House house); -->
+	<insert id="addHouse">
+		insert into House
+		<include refid="columns" />
+		values
+		(#{buildingName}, #{houseNumber}, #{houseName}, #{houseEquity},
+		#{coveredArea}, #{usableArea}, #{responsiblePersonName},
+		#{buildingStructure}, #{completionDate}, #{department.departmentId},
+		#{location.locationId},
+		#{usedtype.usedtypeId},
+		#{assetsUsed.assetsUsedId})
+	</insert>
+
+	<!-- 通过房屋 id 号删除房屋对象: public void deleteHouseById(Integer id); -->
+	<delete id="deleteHouseById">
+		delete from House where houseId = #{houseId}
+	</delete>
+
+	<!-- 获取所有房屋信息:public List<House> getAllHouses(); -->
+	<select id="getAllHouses" resultMap="HouseMap">
+		select * from House
+	</select>
+
+	<!-- 以 house 对象属性作为模糊查询的条件, 查询房屋信息列表: public List<House> getHouseListForLike(House 
+		house); -->
+	<select id="getHouseListForLike" resultMap="HouseMap">
+		select * from House h, Usedtype u
+		where 1=1
+		and h.usedtypeId =
+		u.usedtypeId
+		<if test="buildingName != null">
+			and buildingName like CONCAT(CONCAT('%', #{buildingName},
+			'%'))
+		</if>
+
+		<if test="usedtype != null">
+			and u.typeName like CONCAT(CONCAT('%',
+			#{usedtype.typeName}, '%'))
+		</if>
+	</select>
+
+	<sql id="columns">
+		(buildingName,houseNumber,houseName,houseEquity,coveredArea,
+		usableArea,responsiblePersonName,buildingStructure,completionDate,
+		departmentId,locationId,usedtypeId,assetsUsedId)
+	</sql>
+
+
+</mapper>

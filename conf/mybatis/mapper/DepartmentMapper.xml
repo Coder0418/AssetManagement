@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.project.dao.DepartmentMapper">
+
+	<resultMap type="com.project.beans.Department" id="DepartmentMap">
+		<id column="departmentId" property="departmentId" />
+		<result column="departmentName" property="departmentName" />
+		<!-- collection定义集合类型的属性封装规则 ofType：指定集合里面的元素类型 -->
+		<collection property="userList" ofType="com.project.beans.User">
+			<!-- 定义这个集合中元素的封装规则 -->
+			<id column="userId" property="userId" />
+			<result column="userNumber" property="userNumber" />
+			<result column="nickName" property="nickName" />
+			<result column="userName" property="userName" />
+			<result column="passWord" property="passWord" />
+			<result column="permission" property="permission" />
+			<result column="nickName" property="nickName" />
+		</collection>
+	</resultMap>
+	<!-- 通过部门 id 获取部门信息:public Department getDepartmentById(Integer departmentId); -->
+	<!-- <select id="getDepartmentById" resultMap="DepartmentMap">
+		select * from Department,User
+		where
+		Department.departmentId = #{departmentId} and Department.departmentId = User.departmentId
+	</select> -->
+	<select id="getDepartmentById" resultType="com.project.beans.Department">
+		select * from Department
+		where
+		departmentId = #{departmentId}
+	</select>
+
+	<!-- 添加部门, 添加成功后返回主键:public int addDepartment(Department department); -->
+	<insert id="addDepartment">
+		insert into
+		Department(departmentName) values (#{departmentName})
+	</insert>
+
+
+	<!-- 通过部门 id 删除部门:public void deleteDepartmentById(Integer departmentId); -->
+	<delete id="deleteDepartmentById">
+		delete from Department
+		where
+		departmentId = #{departmentId}
+	</delete>
+
+	<!-- 更新部门信息:public void updateDepartment(Department department); -->
+	<update id="updateDepartment" parameterType="com.project.beans.Department">
+		update Department
+		SET departmentName = #{departmentName}
+		WHERE departmentId = #{departmentId}
+	</update>
+
+	<!-- 获取所有部门信息:public List<Department> getAllDepartment(); -->
+	<select id="getAllDepartment" resultType="com.project.beans.Department">
+		SELECT *
+		FROM Department
+	</select>
+
+</mapper>
